@@ -75,48 +75,6 @@ const PortfolioMenuButton = new Lang.Class({
         });
         this.menu.addMenuItem(this.stockInput);
 
-//------------------------------------------------------------------------------
-
-        this.stockEntries = {
-            count_entry: null,
-            name_entry: null,
-            buyval_entry: null
-        };
-
-        let se = this.stockEntries;
-        let bb = new St.BoxLayout({
-            vertical: false,
-            x_expand: true,
-            style_class: 'popup-inactive-menu-item'
-        });
-
-        let item = null;
-        se.count_entry = new St.Entry({
-            hint_text: 'count',
-            can_focus: true,
-            x_expand: true
-        });
-        se.count_entry.clutter_text.connect('key-press-event', this.onKeyPress.bind(this));
-        bb.add_actor(se.count_entry);
-        se.name_entry = new St.Entry({
-            hint_text: 'name',
-            can_focus: true,
-            x_expand: true
-        });
-        se.name_entry.clutter_text.connect('key-press-event', this.onKeyPress.bind(this));
-        bb.add_actor(se.name_entry);
-        se.buyval_entry = new St.Entry({
-            hint_text: 'value',
-            can_focus: true,
-            x_expand: true
-        });
-        se.buyval_entry.clutter_text.connect('key-press-event', this.onKeyPress.bind(this));
-        bb.add_actor(se.buyval_entry);
-
-        this.stockInput.actor.add_actor(bb);
-
-//------------------------------------------------------------------------------
-
         Main.panel.menuManager.addMenu(this.menu);
         this.menu._arrowAlignment=0.5;
 
@@ -145,6 +103,7 @@ const PortfolioMenuButton = new Lang.Class({
             };
         }
 
+        this.rebuildStockInput();
         this.rebuildSummary();
         this.rebuildPanelMenu();
         this.rebuildStocklist();
@@ -305,9 +264,6 @@ const PortfolioMenuButton = new Lang.Class({
             });
 
             let item = null;
-            //item = Main.panel.statusArea.aggregateMenu._system._createActionButton('window-close-symbolic', _('Remove'));
-            //item.set_x_align(Clutter.ActorAlign.CENTER);
-            //item.set_y_align(Clutter.ActorAlign.CENTER);
             item = new St.Button({
                 reactive: true,
                 can_focus: true,
@@ -327,7 +283,8 @@ const PortfolioMenuButton = new Lang.Class({
                 y_align: Clutter.ActorAlign.CENTER,
                 style_class: 'portfolio-label'
             });
-            item.add_actor(new St.Label({ text: _(config.stocks[stock].count+"") }));
+            let count = String(config.stocks[stock].count);
+            item.add_actor(new St.Label({text: count}));
             bb.add_actor(item);
             item = new St.Button({
                 reactive: true,
@@ -371,11 +328,50 @@ const PortfolioMenuButton = new Lang.Class({
         this.recalcPortfolio();
     },
 
+    rebuildStockInput: function() {
+        this.stockEntries = {
+            count_entry: null,
+            name_entry: null,
+            buyval_entry: null
+        };
+
+        let se = this.stockEntries;
+        let bb = new St.BoxLayout({
+            vertical: false,
+            x_expand: true,
+            style_class: 'popup-inactive-menu-item'
+        });
+
+        let item = null;
+        se.count_entry = new St.Entry({
+            hint_text: 'count',
+            can_focus: true,
+            x_expand: true
+        });
+        se.count_entry.clutter_text.connect('key-press-event',
+                                            this.onKeyPress.bind(this));
+        bb.add_actor(se.count_entry);
+        se.name_entry = new St.Entry({
+            hint_text: 'name',
+            can_focus: true,
+            x_expand: true
+        });
+        se.name_entry.clutter_text.connect('key-press-event',
+                                           this.onKeyPress.bind(this));
+        bb.add_actor(se.name_entry);
+        se.buyval_entry = new St.Entry({
+            hint_text: 'value',
+            can_focus: true,
+            x_expand: true
+        });
+        se.buyval_entry.clutter_text.connect('key-press-event',
+                                             this.onKeyPress.bind(this));
+        bb.add_actor(se.buyval_entry);
+
+        this.stockInput.actor.add_actor(bb);
+    },
+
     fetchStocks: function () {
-        //for (var stock in config.stocks) {
-        //    this.recalcStock(stock, [String(50 + Math.random()), String(50), "name"]);
-        //}
-        //this.recalcPortfolio();
         if (this.httpSession) {
             this.httpSession.abort();
         }
