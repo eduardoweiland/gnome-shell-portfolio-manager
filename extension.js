@@ -8,7 +8,16 @@ const Tweener = imports.ui.tweener;
 const GLib = imports.gi.GLib;
 const Soup = imports.gi.Soup;
 
-const config = {
+const CONFIG_DIR = GLib.build_pathv( '/', [
+    GLib.get_user_data_dir(),
+    'gnome-shell-portfolio-manager'
+]);
+const CONFIG_FILE = GLib.build_filenamev([
+    CONFIG_DIR,
+    'config.json'
+]);
+
+var config = {
     stocks: {
     }
 };
@@ -30,6 +39,8 @@ const PortfolioMenuButton = new Lang.Class({
 
     _init: function ()
     {
+        this.loadConfig();
+
         // create the panel bar button
         this.parent(0.0, "Portfolio Manager", false);
 
@@ -443,12 +454,14 @@ const PortfolioMenuButton = new Lang.Class({
             count: count,
             buyval: buyval
         };
+        this.saveConfig();
         this.rebuildStocklist();
         this.fetchStocks();
     },
 
     removeStock: function(stock) {
         delete config.stocks[stock];
+        this.saveConfig();
         this.rebuildStocklist();
     },
 
@@ -459,7 +472,6 @@ const PortfolioMenuButton = new Lang.Class({
             let count = se.count_entry.clutter_text.get_text();
             let name = se.name_entry.clutter_text.get_text();
             let buyval = se.buyval_entry.clutter_text.get_text();
-            this.myDebugVar = "" + name + " " + count + " " + buyval;
             if (count === '' || name === '' || buyval === '') {
                 return;
             }
@@ -467,6 +479,21 @@ const PortfolioMenuButton = new Lang.Class({
             se.count_entry.clutter_text.set_text('');
             se.name_entry.clutter_text.set_text('');
             se.buyval_entry.clutter_text.set_text('');
+        }
+    },
+
+    saveConfig: function() {
+        GLib.mkdir_with_parents(CONFIG_DIR, 493);
+        GLib.file_set_contents(CONFIG_FILE, JSON.stringify(config, null, "  "));
+    },
+
+    loadConfig: function() {
+        try {
+            let config_json = GLib.file_get_contents(CONFIG_FILE);
+            if (config_json[0]) {
+                config = JSON.parse(config_json[1]);
+            }
+        } catch (e) {
         }
     }
 });
