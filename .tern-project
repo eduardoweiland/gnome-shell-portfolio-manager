@@ -1,0 +1,9 @@
+{
+  "libs": [
+  ],
+  "loadEagerly": [
+    "extension.js"
+  ],
+  "plugins": {
+  }
+}
