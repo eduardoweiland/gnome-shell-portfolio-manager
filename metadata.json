@@ -1,0 +1,8 @@
+{
+    "description": "Manage and check your portfolio from the panel.",
+    "name": "Portfolio Manager",
+    "shell-version": [
+        "3.22.2"
+    ],
+    "uuid": "Portfolio_Manager@mail.timurcelik.de"
+}
