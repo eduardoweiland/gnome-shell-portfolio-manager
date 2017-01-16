@@ -6,6 +6,7 @@ const Clutter = imports.gi.Clutter;
 const PopupMenu = imports.ui.popupMenu;
 const Tweener = imports.ui.tweener;
 const GLib = imports.gi.GLib;
+const Gtk = imports.gi.Gtk;
 const Soup = imports.gi.Soup;
 
 const CONFIG_DIR = GLib.build_pathv( '/', [
@@ -57,17 +58,20 @@ const PortfolioMenuButton = new Lang.Class({
 
         // add popup menu to panel button
         this.summary = new PopupMenu.PopupBaseMenuItem({
-            reactive: false
+            reactive: false,
+            can_focus: false
         });
         this.menu.addMenuItem(this.summary);
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
         this.stocklist = new PopupMenu.PopupBaseMenuItem({
-            reactive: false
+            reactive: false,
+            can_focus: false
         });
         this.menu.addMenuItem(this.stocklist);
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
         this.stockInput = new PopupMenu.PopupBaseMenuItem({
-            reactive: false
+            reactive: false,
+            can_focus: false
         });
         this.menu.addMenuItem(this.stockInput);
 
@@ -89,18 +93,21 @@ const PortfolioMenuButton = new Lang.Class({
         let item = null;
         se.count_entry = new St.Entry({
             hint_text: 'count',
+            can_focus: true,
             x_expand: true
         });
         se.count_entry.clutter_text.connect('key-press-event', this.onKeyPress.bind(this));
         bb.add_actor(se.count_entry);
         se.name_entry = new St.Entry({
             hint_text: 'name',
+            can_focus: true,
             x_expand: true
         });
         se.name_entry.clutter_text.connect('key-press-event', this.onKeyPress.bind(this));
         bb.add_actor(se.name_entry);
         se.buyval_entry = new St.Entry({
             hint_text: 'value',
+            can_focus: true,
             x_expand: true
         });
         se.buyval_entry.clutter_text.connect('key-press-event', this.onKeyPress.bind(this));
@@ -320,14 +327,21 @@ const PortfolioMenuButton = new Lang.Class({
             });
             item.add_actor(new St.Label({ text: _(config.stocks[stock].count+"") }));
             bb.add_actor(item);
-            item = new St.BoxLayout({
-                vertical: true,
-                x_expand: true,
-                y_align: Clutter.ActorAlign.CENTER,
+            item = new St.Button({
+                reactive: true,
+                can_focus: true,
+                track_hover: true,
+                accessible_name: 'Open in Browser',
                 style_class: 'portfolio-stock-label'
             });
+            item.connect('clicked', Gtk.show_uri.bind(this,
+                null,
+                'https://finance.yahoo.com/quote/' + stock,
+                global.get_current_time()
+            ));
             item.add_actor(sl.name);
             bb.add_actor(item);
+            bb.add_actor(new St.Widget({x_expand: true}));
             item = new St.BoxLayout({
                 vertical: true,
                 x_align: Clutter.ActorAlign.END,
