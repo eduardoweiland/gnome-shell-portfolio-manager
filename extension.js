@@ -228,6 +228,8 @@ const PortfolioMenuButton = new Lang.Class({
             } else if (new_value < old_value) {
                 bgcolor = {red: 255, green: 0, blue: 50, alpha: 150};
                 panel_icon = 'pan-down-symbolic';
+            } else {
+                panel_icon = 'pan-end-symbolic';
             }
         }
         this.panelButtonBox.remove_all_children();
