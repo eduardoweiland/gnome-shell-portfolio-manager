@@ -481,16 +481,16 @@ const PortfolioMenuButton = new Lang.Class({
         let symbol = event.get_key_symbol();
         if ((symbol == Clutter.Return) || (symbol == Clutter.KP_Enter)) {
             let se = this.stockEntries;
-            let count = se.count_entry.clutter_text.get_text();
-            let name = se.name_entry.clutter_text.get_text();
-            let buyval = se.buyval_entry.clutter_text.get_text();
+            let count = se.count_entry.get_text();
+            let name = se.name_entry.get_text();
+            let buyval = se.buyval_entry.get_text();
             if (count === '' || name === '' || buyval === '') {
                 return;
             }
             this.addStock(name, Number(count), Number(buyval));
-            se.count_entry.clutter_text.set_text('');
-            se.name_entry.clutter_text.set_text('');
-            se.buyval_entry.clutter_text.set_text('');
+            se.count_entry.set_text('');
+            se.name_entry.set_text('');
+            se.buyval_entry.set_text('');
         }
     },
 
