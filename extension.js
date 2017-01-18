@@ -115,10 +115,14 @@ const PortfolioMenuButton = new Lang.Class({
         this.rebuildStocklist();
         this.fetchStocks();
 
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, 120000, () => {
+        this.fetchItv = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 120000, () => {
             this.fetchStocks();
             return true;
         }, null);
+    },
+
+    stop: function() {
+        GLib.source_remove(this.fetchItv);
     },
 
     rebuildSummary: function() {
@@ -534,5 +538,6 @@ function enable()
 
 function disable()
 {
+    portfolioMenu.stop();
     portfolioMenu.destroy();
 }
