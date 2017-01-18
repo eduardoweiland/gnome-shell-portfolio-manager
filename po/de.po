@@ -1,0 +1,36 @@
+# German translations for gnome-shell-portfolio-manager package
+# German translation for gnome-shell-portfolio-manager.
+# Copyright (C) 2017 THE gnome-shell-portfolio-manager'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the
+# gnome-shell-portfolio-manager package.
+# Timur Celik <mail@timurcelik.de>, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-shell-portfolio-manager\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-01-18 20:56+0100\n"
+"PO-Revision-Date: 2017-01-18 21:17+0100\n"
+"Last-Translator: Timur Celik <mail@timurcelik.de>\n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: extension.js:137
+msgid "Portfolio value:"
+msgstr "Depotwert:"
+
+#: extension.js:138
+msgid "Purchase value:"
+msgstr "Kaufwert:"
+
+#: extension.js:153
+msgid "Difference to purchase value:"
+msgstr "Differenz seit Kauf:"
+
+#: extension.js:154
+msgid "Difference to previous day:"
+msgstr "Differenz zum Vortag:"

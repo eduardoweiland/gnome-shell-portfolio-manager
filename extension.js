@@ -8,6 +8,11 @@ const Tweener = imports.ui.tweener;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Soup = imports.gi.Soup;
+const Gettext = imports.gettext;
+const ExtensionUtils = imports.misc.extensionUtils;
+
+Gettext.textdomain("gnome-shell-portfolio-manager");
+const _ = Gettext.gettext;
 
 const CONFIG_DIR = GLib.build_pathv( '/', [
     GLib.get_user_data_dir(),
@@ -17,6 +22,7 @@ const CONFIG_FILE = GLib.build_filenamev([
     CONFIG_DIR,
     'config.json'
 ]);
+
 
 var config = {
     stocks: {
@@ -514,6 +520,10 @@ let portfolioMenu;
 
 function init()
 {
+    let extension = ExtensionUtils.getCurrentExtension();
+    let localeDir = extension.dir.get_child('locale');
+    Gettext.bindtextdomain("gnome-shell-portfolio-manager",
+                           localeDir.get_path());
 }
 
 function enable()
