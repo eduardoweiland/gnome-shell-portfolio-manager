@@ -134,8 +134,8 @@ const PortfolioMenuButton = new Lang.Class({
             vertical: true,
             style_class: 'portfolio-label'
         });
-        b1.add_actor(new St.Label({ text: _('Depotwert:') }));
-        b1.add_actor(new St.Label({ text: _('Kaufwert:') }));
+        b1.add_actor(new St.Label({ text: _('Portfolio value:') }));
+        b1.add_actor(new St.Label({ text: _('Purchase value:') }));
         bb.add_actor(b1);
 
         let b2 = new St.BoxLayout({
@@ -150,8 +150,8 @@ const PortfolioMenuButton = new Lang.Class({
             vertical: true,
             style_class: 'portfolio-label'
         });
-        b3.add_actor(new St.Label({ text: _('Differenz seit Kauf:') }));
-        b3.add_actor(new St.Label({ text: _('Differenz zum Vortag:') }));
+        b3.add_actor(new St.Label({ text: _('Difference to purchase value:') }));
+        b3.add_actor(new St.Label({ text: _('Difference to previous day:') }));
         bb.add_actor(b3);
 
         let b4 = new St.BoxLayout({
