@@ -15,4 +15,4 @@ locale/%/LC_MESSAGES/gnome-shell-portfolio-manager.mo: po/%.po
 	msgfmt -c -o $@ $?
 
 gnome-shell-portfolio-manager.zip: $(LOCALES)
-
+	zip -r $@ locale metadata.json stylesheet.css $(SOURCES)
