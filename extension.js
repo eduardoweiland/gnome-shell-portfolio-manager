@@ -438,8 +438,8 @@ const PortfolioMenuButton = new Lang.Class({
         p.value_yesterday = 0;
         p.diff_yesterday = 0;
         for (var stock in config.stocks) {
-            it_cfg = config.stocks[stock];
-            it_cur = this.stocksData[stock];
+            let it_cfg = config.stocks[stock];
+            let it_cur = this.stocksData[stock];
             p.value_current += it_cfg.count * it_cur.lastTradePrice;
             p.value_bought += it_cfg.count * it_cfg.buyval;
             p.value_yesterday += it_cur.previousClose * it_cfg.count;
