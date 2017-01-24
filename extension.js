@@ -29,16 +29,29 @@ var config = {
     }
 };
 
-/**
- * I need this because gnome-shell seems to ignore the options parameter of
- * toLocaleString() for numbers.
- */
-function toLocaleFixed(n, digits) {
+function setTextFormatted(actor, n, digits, colored, unit) {
     if(n === null) {
-        return '---';
+        actor.set_text('---');
+        return;
     }
     //return parseFloat(n.toFixed(digits)).toLocaleString();
-    return n.toFixed(digits);
+
+    let text = n.toFixed(digits);
+
+    if (colored) {
+        if (n < 0.0) {
+            actor.set_style_class_name('negative-change');
+        } else {
+            text = '+' + text;
+            actor.set_style_class_name('positive-change');
+        }
+    }
+
+    if (unit) {
+        text += unit;
+    }
+
+    actor.set_text(text);
 }
 
 const PortfolioMenuButton = new Lang.Class({
@@ -188,7 +201,7 @@ const PortfolioMenuButton = new Lang.Class({
         let panel_text = '...';
         let bgcolor = null;
         if(new_value !== undefined) {
-            panel_text = toLocaleFixed(new_value, 2) + '%';
+            panel_text = new_value.toFixed(2) + '%'; // TODO localization
             if(old_value === null) {
                 panel_icon = 'pan-end-symbolic';
             } else if(new_value > old_value) {
@@ -428,12 +441,12 @@ const PortfolioMenuButton = new Lang.Class({
         let sd = this.stocksData[stock];
         let sl = this.stocksLabels[stock];
         sl.name.set_text(sd.name);
-        sl.value_current.set_text(toLocaleFixed(sd.lastTradePrice, 2));
-        sl.diff_yesterday.set_text(toLocaleFixed(sd.diff_yesterday, 2));
-        sl.diff_yesterday_rel.set_text(toLocaleFixed(sd.diff_yesterday_rel, 2) + '%');
-        sl.value_current_sum.set_text(toLocaleFixed(sd.value_current_sum, 2));
-        sl.diff_bought_sum.set_text(toLocaleFixed(sd.diff_bought_sum, 2));
-        sl.diff_bought_sum_rel.set_text(toLocaleFixed(sd.diff_bought_sum_rel, 2) + '%');
+        setTextFormatted(sl.value_current, sd.lastTradePrice, 2, false);
+        setTextFormatted(sl.diff_yesterday, sd.diff_yesterday, 2, true);
+        setTextFormatted(sl.diff_yesterday_rel, sd.diff_yesterday_rel, 2, true, '%');
+        setTextFormatted(sl.value_current_sum, sd.value_current_sum, 2, false);
+        setTextFormatted(sl.diff_bought_sum, sd.diff_bought_sum, 2, true);
+        setTextFormatted(sl.diff_bought_sum_rel, sd.diff_bought_sum_rel, 2, true, '%');
     },
 
     recalcPortfolio: function () {
@@ -461,12 +474,12 @@ const PortfolioMenuButton = new Lang.Class({
 
 
         let pl = this.portfolioLabels;
-        pl.value_current.set_text(toLocaleFixed(p.value_current, 2));
-        pl.value_bought.set_text(toLocaleFixed(p.value_bought, 2));
-        pl.diff_bought.set_text(toLocaleFixed(p.diff_bought, 2));
-        pl.diff_bought_rel.set_text(toLocaleFixed(p.diff_bought_rel, 2) + '%');
-        pl.diff_yesterday.set_text(toLocaleFixed(p.diff_yesterday, 2));
-        pl.diff_yesterday_rel.set_text(toLocaleFixed(p.diff_yesterday_rel, 2) + '%');
+        setTextFormatted(pl.value_current, p.value_current, 2, false);
+        setTextFormatted(pl.value_bought, p.value_bought, 2, false);
+        setTextFormatted(pl.diff_bought, p.diff_bought, 2, true);
+        setTextFormatted(pl.diff_bought_rel, p.diff_bought_rel, 2, true, '%');
+        setTextFormatted(pl.diff_yesterday, p.diff_yesterday, 2, true);
+        setTextFormatted(pl.diff_yesterday_rel, p.diff_yesterday_rel, 2, true, '%');
 
         this.rebuildPanelMenu(p.diff_bought_rel, diff_bought_rel_old);
     },

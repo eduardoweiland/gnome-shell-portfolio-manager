@@ -1,4 +1,12 @@
 
+.positive-change {
+    color: #00b040;
+}
+
+.negative-change {
+    color: #ff8080;
+}
+
 .portfolio-label {
     padding: .4em;
     text-align: right;
