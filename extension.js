@@ -354,7 +354,7 @@ const PortfolioMenuButton = new Lang.Class({
 
         let item = null;
         se.count_entry = new St.Entry({
-            hint_text: 'count',
+            hint_text: _('cnt.'),
             can_focus: true,
             x_expand: true
         });
@@ -362,7 +362,7 @@ const PortfolioMenuButton = new Lang.Class({
                                             this.onKeyPress.bind(this));
         bb.add_actor(se.count_entry);
         se.name_entry = new St.Entry({
-            hint_text: 'name',
+            hint_text: _('symbol'),
             can_focus: true,
             x_expand: true
         });
@@ -370,7 +370,7 @@ const PortfolioMenuButton = new Lang.Class({
                                            this.onKeyPress.bind(this));
         bb.add_actor(se.name_entry);
         se.buyval_entry = new St.Entry({
-            hint_text: 'value',
+            hint_text: _('price'),
             can_focus: true,
             x_expand: true
         });

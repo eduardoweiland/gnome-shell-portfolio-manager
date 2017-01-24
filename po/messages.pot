@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-18 20:56+0100\n"
+"POT-Creation-Date: 2017-01-24 19:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,18 +17,30 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: extension.js:137
+#: extension.js
 msgid "Portfolio value:"
 msgstr ""
 
-#: extension.js:138
+#: extension.js
 msgid "Purchase value:"
 msgstr ""
 
-#: extension.js:153
+#: extension.js
 msgid "Difference to purchase value:"
 msgstr ""
 
-#: extension.js:154
+#: extension.js
 msgid "Difference to previous day:"
+msgstr ""
+
+#: extension.js
+msgid "cnt."
+msgstr ""
+
+#: extension.js
+msgid "symbol"
+msgstr ""
+
+#: extension.js
+msgid "price"
 msgstr ""

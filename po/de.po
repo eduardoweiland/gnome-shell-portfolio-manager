@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-shell-portfolio-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-18 20:56+0100\n"
+"POT-Creation-Date: 2017-01-24 19:37+0100\n"
 "PO-Revision-Date: 2017-01-18 21:17+0100\n"
 "Last-Translator: Timur Celik <mail@timurcelik.de>\n"
 "Language-Team: German\n"
@@ -19,18 +19,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: extension.js:137
+#: extension.js
 msgid "Portfolio value:"
 msgstr "Depotwert:"
 
-#: extension.js:138
+#: extension.js
 msgid "Purchase value:"
 msgstr "Kaufwert:"
 
-#: extension.js:153
+#: extension.js
 msgid "Difference to purchase value:"
 msgstr "Differenz seit Kauf:"
 
-#: extension.js:154
+#: extension.js
 msgid "Difference to previous day:"
 msgstr "Differenz zum Vortag:"
+
+#: extension.js
+msgid "cnt."
+msgstr "Stk."
+
+#: extension.js
+msgid "symbol"
+msgstr "Symbol"
+
+#: extension.js
+msgid "price"
+msgstr "Preis"

@@ -8,7 +8,7 @@ LOCALES := $(patsubst po/%.po, \
 all: gnome-shell-portfolio-manager.zip
 
 po/messages.pot: $(SOURCES)
-	xgettext -j -o $@ $?
+	xgettext -j --add-location=file -o $@ $?
 
 locale/%/LC_MESSAGES/gnome-shell-portfolio-manager.mo: po/%.po
 	mkdir -p $(dir $@)
