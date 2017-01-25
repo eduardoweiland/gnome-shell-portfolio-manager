@@ -34,8 +34,8 @@ function setTextFormatted(actor, n, digits, colored, unit) {
         actor.set_text('---');
         return;
     }
-    //return parseFloat(n.toFixed(digits)).toLocaleString();
 
+    // TODO fidure out how to use toLocaleString with fixed digits
     let text = n.toFixed(digits);
 
     if (colored) {
