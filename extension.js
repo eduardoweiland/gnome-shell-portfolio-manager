@@ -287,18 +287,12 @@ const PortfolioMenuButton = new Lang.Class({
             });
 
             let item = null;
-            item = new St.Button({
-                reactive: true,
-                can_focus: true,
-                track_hover: true,
-                accessible_name: 'Remove',
-                style_class: 'portfolio-label'
-            });
-            item.child = new St.Icon({
-                icon_size: 15,
-                icon_name: 'window-close-symbolic'
-            });
-            item.connect('clicked', this.removeStock.bind(this, stock));
+            let button = null;
+            item = new St.Bin();
+            button = Main.panel.statusArea.aggregateMenu._system._createActionButton('window-close-symbolic', 'Remove');
+            button.connect('clicked', this.removeStock.bind(this, stock));
+            button.set_style('padding: 8px; border: 0px');
+            item.add_actor(button);
             bb.add_actor(item);
             item = new St.BoxLayout({
                 vertical: true,
@@ -309,19 +303,16 @@ const PortfolioMenuButton = new Lang.Class({
             let count = String(config.stocks[stock].count);
             item.add_actor(new St.Label({text: count}));
             bb.add_actor(item);
-            item = new St.Button({
-                reactive: true,
-                can_focus: true,
-                track_hover: true,
-                accessible_name: 'Open in Browser',
-                style_class: 'portfolio-stock-label'
-            });
-            item.connect('clicked', Gtk.show_uri.bind(this,
+            item = new St.Bin();
+            button = Main.panel.statusArea.aggregateMenu._system._createActionButton(String(sl.name), 'Open in Browser');
+            button.connect('clicked', Gtk.show_uri.bind(this,
                 null,
                 'https://finance.yahoo.com/quote/' + stock,
                 global.get_current_time()
             ));
-            item.add_actor(sl.name);
+            button.add_actor(sl.name);
+            button.set_style('padding: 8px; border: 0px; border-radius: 5px');
+            item.add_actor(button);
             bb.add_actor(item);
             bb.add_actor(new St.Widget({x_expand: true}));
             item = new St.BoxLayout({
