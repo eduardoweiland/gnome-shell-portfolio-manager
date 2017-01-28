@@ -413,11 +413,14 @@ const PortfolioMenuButton = new Lang.Class({
         let message = Soup.form_request_new_from_hash('GET', url, params);
         this.httpSession.queue_message(message, (httpSession, message) => {
             try {
-                let split_body = message.response_body.data.split('\n');
+                let msg = message.response_body.data;
+                msg = msg.replace(new RegExp("N/A", 'g'), "null");
+                let split_body = msg.split('\n');
                 let i = 0;
                 for (var stock in config.stocks) {
-                    this.recalcStock(stock, split_body[i].split(','),
-                                            split_body[i+1].split(','));
+                    let stock_rate = JSON.parse('[' + split_body[i] + ']');
+                    let currency_rate = JSON.parse('[' + split_body[i+1] + ']');
+                    this.recalcStock(stock, stock_rate, currency_rate);
                     i += 2;
                 }
 
@@ -427,6 +430,7 @@ const PortfolioMenuButton = new Lang.Class({
                     this.recalcPortfolio();
                 }
             } catch (e) {
+                log(e);
             }
         });
     },
@@ -434,10 +438,10 @@ const PortfolioMenuButton = new Lang.Class({
     recalcStock: function(stock, data, currency_rate) {
         let sd = this.stocksData[stock];
         let sc = config.stocks[stock];
-        sd.lastTradePrice = Number(data[0])/Number(currency_rate[0]);
-        sd.previousClose = Number(data[1])/Number(currency_rate[0]);
-        sd.name = String(data[2]).split('"')[1];
-        sd.currency = String(data[3]).split('"')[1];
+        sd.lastTradePrice = data[0]/currency_rate[0];
+        sd.previousClose = data[1]/currency_rate[0];
+        sd.name = data[2];
+        sd.currency = data[3];
         sd.diff_yesterday = sd.lastTradePrice-sd.previousClose;
         sd.diff_yesterday_rel = sd.diff_yesterday/sd.previousClose*100;
         sd.value_current_sum = sd.lastTradePrice*sc.count;
