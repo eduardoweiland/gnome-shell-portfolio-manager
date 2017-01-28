@@ -23,6 +23,9 @@ const CONFIG_FILE = GLib.build_filenamev([
     'config.json'
 ]);
 
+var preferences = {
+    currency: "EUR"
+};
 
 var config = {
     stocks: {
@@ -113,6 +116,7 @@ const PortfolioMenuButton = new Lang.Class({
                 lastTradePrice: null,
                 previousClose: null,
                 name: stock,
+                currency: "",
 
                 diff_yesterday: null,
                 diff_yesterday_rel: null,
@@ -396,18 +400,21 @@ const PortfolioMenuButton = new Lang.Class({
         let param_stocks = '';
         for (var stock in config.stocks) {
             param_stocks += stock + ',';
+            let stock_currency = this.stocksData[stock].currency;
+            param_stocks += preferences.currency + stock_currency + '=X,';
         }
         param_stocks = param_stocks.substring(0, param_stocks.length);
         let url = 'http://download.finance.yahoo.com/d/quotes.csv';
-        let params = {s: param_stocks, f: "l1pn"};
+        let params = {s: param_stocks, f: "l1pnc4"};
         let message = Soup.form_request_new_from_hash('GET', url, params);
         this.httpSession.queue_message(message, (httpSession, message) => {
             try {
                 let split_body = message.response_body.data.split('\n');
                 let i = 0;
                 for (var stock in config.stocks) {
-                    this.recalcStock(stock, split_body[i].split(','));
-                    i += 1;
+                    this.recalcStock(stock, split_body[i].split(','),
+                                            split_body[i+1].split(','));
+                    i += 2;
                 }
                 this.recalcPortfolio();
             } catch (e) {
@@ -415,12 +422,13 @@ const PortfolioMenuButton = new Lang.Class({
         });
     },
 
-    recalcStock: function(stock, data) {
+    recalcStock: function(stock, data, currency_rate) {
         let sd = this.stocksData[stock];
         let sc = config.stocks[stock];
-        sd.lastTradePrice = Number(data[0]);
-        sd.previousClose = Number(data[1]);
+        sd.lastTradePrice = Number(data[0])/Number(currency_rate[0]);
+        sd.previousClose = Number(data[1])/Number(currency_rate[0]);
         sd.name = String(data[2]).split('"')[1];
+        sd.currency = String(data[3]).split('"')[1];
         sd.diff_yesterday = sd.lastTradePrice-sd.previousClose;
         sd.diff_yesterday_rel = sd.diff_yesterday/sd.previousClose*100;
         sd.value_current_sum = sd.lastTradePrice*sc.count;
