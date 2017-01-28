@@ -397,11 +397,15 @@ const PortfolioMenuButton = new Lang.Class({
         }
         this.httpSession = new Soup.Session();
 
+        let refetch = false;
         let param_stocks = '';
         for (var stock in config.stocks) {
             param_stocks += stock + ',';
             let stock_currency = this.stocksData[stock].currency;
             param_stocks += preferences.currency + stock_currency + '=X,';
+            if(stock_currency === "") {
+                refetch = true;
+            }
         }
         param_stocks = param_stocks.substring(0, param_stocks.length);
         let url = 'http://download.finance.yahoo.com/d/quotes.csv';
@@ -416,7 +420,12 @@ const PortfolioMenuButton = new Lang.Class({
                                             split_body[i+1].split(','));
                     i += 2;
                 }
-                this.recalcPortfolio();
+
+                if(refetch === true) {
+                    this.fetchStocks();
+                } else {
+                    this.recalcPortfolio();
+                }
             } catch (e) {
             }
         });
