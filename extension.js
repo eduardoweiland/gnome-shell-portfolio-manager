@@ -353,30 +353,32 @@ const PortfolioMenuButton = new Lang.Class({
         let bb = new St.BoxLayout({
             vertical: false,
             x_expand: true,
+            x_align: Clutter.ActorAlign.CENTER,
             style_class: 'popup-inactive-menu-item'
         });
 
-        let item = null;
         se.count_entry = new St.Entry({
             hint_text: _('cnt.'),
             can_focus: true,
-            x_expand: true
+            width: 100
         });
+        se.count_entry.set_style('margin-right: 10px');
         se.count_entry.clutter_text.connect('key-press-event',
                                             this.onKeyPress.bind(this));
         bb.add_actor(se.count_entry);
         se.name_entry = new St.Entry({
             hint_text: _('symbol'),
             can_focus: true,
-            x_expand: true
+            width: 200
         });
+        se.name_entry.set_style('margin-right: 10px');
         se.name_entry.clutter_text.connect('key-press-event',
                                            this.onKeyPress.bind(this));
         bb.add_actor(se.name_entry);
         se.buyval_entry = new St.Entry({
             hint_text: _('price'),
             can_focus: true,
-            x_expand: true
+            width: 100
         });
         se.buyval_entry.clutter_text.connect('key-press-event',
                                              this.onKeyPress.bind(this));
