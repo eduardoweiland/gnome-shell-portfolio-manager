@@ -84,12 +84,7 @@ const PortfolioMenuButton = new Lang.Class({
             can_focus: false
         });
         this.menu.addMenuItem(this.summary);
-        this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-        this.stocklist = new PopupMenu.PopupBaseMenuItem({
-            reactive: false,
-            can_focus: false
-        });
-        this.menu.addMenuItem(this.stocklist);
+
         this.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
         this.stockInput = new PopupMenu.PopupBaseMenuItem({
             reactive: false,
@@ -100,6 +95,24 @@ const PortfolioMenuButton = new Lang.Class({
         Main.panel.menuManager.addMenu(this.menu);
         this.menu._arrowAlignment=0.5;
 
+        this.stocksData = {};
+
+        this.rebuildGrid();
+        this.rebuildStockInput();
+        this.rebuildPanelMenu();
+        this.fetchStocks();
+
+        this.fetchItv = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 120000, () => {
+            this.fetchStocks();
+            return true;
+        }, null);
+    },
+
+    stop: function() {
+        GLib.source_remove(this.fetchItv);
+    },
+
+    rebuildGrid: function() {
         this.portfolioData = {
             value_current: null,
             value_bought: null,
@@ -110,8 +123,11 @@ const PortfolioMenuButton = new Lang.Class({
             diff_yesterday_rel: null
         };
 
-        this.stocksData = {};
         for (var stock in config.stocks) {
+            if(this.stocksData[stock] !== undefined) {
+                continue;
+            }
+
             this.stocksData[stock] = {
                 lastTradePrice: null,
                 previousClose: null,
@@ -126,78 +142,68 @@ const PortfolioMenuButton = new Lang.Class({
             };
         }
 
-        this.rebuildStockInput();
         this.rebuildSummary();
-        this.rebuildPanelMenu();
         this.rebuildStocklist();
-        this.fetchStocks();
-
-        this.fetchItv = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 120000, () => {
-            this.fetchStocks();
-            return true;
-        }, null);
-    },
-
-    stop: function() {
-        GLib.source_remove(this.fetchItv);
     },
 
     rebuildSummary: function() {
+        this.summary.actor.destroy_all_children();
+        this.grid = new St.Widget({
+            style_class: 'portfolio-label',
+            x_expand: true,
+            x_align: Clutter.ActorAlign.CENTER,
+            layout_manager: new Clutter.GridLayout()
+        });
+        this.summary.actor.add_child(this.grid);
+
         this.portfolioLabels = {
             value_current: new St.Label(),
-            value_bought: new St.Label(),
             diff_bought: new St.Label(),
             diff_yesterday: new St.Label(),
             diff_bought_rel: new St.Label(),
             diff_yesterday_rel: new St.Label()
         };
+        let layout = this.grid.layout_manager;
+        let item = null;
 
-        let bb = new St.BoxLayout({
-            vertical: false,
-            style_class: 'popup-inactive-menu-item'
-        });
-
-        let b1 = new St.BoxLayout({
+        item = new St.BoxLayout({
             vertical: true,
             style_class: 'portfolio-label'
         });
-        b1.add_actor(new St.Label({ text: _('Portfolio value:') }));
-        b1.add_actor(new St.Label({ text: _('Purchase value:') }));
-        bb.add_actor(b1);
+        item.add_actor(new St.Label({ text: _('Today') }));
+        layout.attach(item, 3, 0, 1, 1);
 
-        let b2 = new St.BoxLayout({
+        item = new St.BoxLayout({
             vertical: true,
             style_class: 'portfolio-label'
         });
-        b2.add_actor(this.portfolioLabels.value_current);
-        b2.add_actor(this.portfolioLabels.value_bought);
-        bb.add_actor(b2);
+        item.add_actor(new St.Label({ text: _('Total') }));
+        layout.attach(item, 4, 0, 1, 1);
 
-        let b3 = new St.BoxLayout({
+        item = new St.BoxLayout({
             vertical: true,
             style_class: 'portfolio-label'
         });
-        b3.add_actor(new St.Label({ text: _('Difference to purchase value:') }));
-        b3.add_actor(new St.Label({ text: _('Difference to previous day:') }));
-        bb.add_actor(b3);
+        item.add_actor(new St.Label());
+        item.add_actor(this.portfolioLabels.diff_yesterday);
+        item.add_actor(this.portfolioLabels.diff_yesterday_rel);
+        layout.attach(item, 3, 1, 1, 1);
 
-        let b4 = new St.BoxLayout({
+        item = new St.BoxLayout({
             vertical: true,
             style_class: 'portfolio-label'
         });
-        b4.add_actor(this.portfolioLabels.diff_bought);
-        b4.add_actor(this.portfolioLabels.diff_yesterday);
-        bb.add_actor(b4);
+        item.add_actor(this.portfolioLabels.value_current);
+        item.add_actor(this.portfolioLabels.diff_bought);
+        item.add_actor(this.portfolioLabels.diff_bought_rel);
+        layout.attach(item, 4, 1, 1, 1);
 
-        let b5 = new St.BoxLayout({
-            vertical: true,
-            style_class: 'portfolio-label'
+        item = new St.Widget({
+            style_class: 'popup-separator-menu-item',
+            y_expand: true,
+            y_align: Clutter.ActorAlign.CENTER
         });
-        b5.add_actor(this.portfolioLabels.diff_bought_rel);
-        b5.add_actor(this.portfolioLabels.diff_yesterday_rel);
-        bb.add_actor(b5);
-
-        this.summary.actor.add_actor(bb);
+        layout.attach(item, 0, 2, 5, 1);
     },
 
     rebuildPanelMenu: function(new_value, old_value) {
@@ -250,14 +256,8 @@ const PortfolioMenuButton = new Lang.Class({
     },
 
     rebuildStocklist: function () {
-        this.stocklist.actor.remove_all_children();
-
-        let list = new St.BoxLayout({
-            vertical: true,
-            x_expand: true,
-            style_class: 'portfolio-label'
-        });
-
+        let layout = this.grid.layout_manager;
+        let row = 3;
         this.stocksLabels = {};
         for (var stock in config.stocks) {
             if(this.stocksData[stock] === undefined) {
@@ -284,11 +284,6 @@ const PortfolioMenuButton = new Lang.Class({
                 diff_bought_sum_rel: new St.Label()
             };
             let sl = this.stocksLabels[stock];
-            let bb = new St.BoxLayout({
-                vertical: false,
-                x_expand: true,
-                style_class: 'popup-inactive-menu-item'
-            });
 
             let item = null;
             let button = null;
@@ -297,17 +292,19 @@ const PortfolioMenuButton = new Lang.Class({
             button.connect('clicked', this.removeStock.bind(this, stock));
             button.set_style('padding: 8px; border: 0px');
             item.add_actor(button);
-            bb.add_actor(item);
+            layout.attach(item, 0, row, 1, 1);
+
             item = new St.BoxLayout({
-                vertical: true,
-                x_align: Clutter.ActorAlign.START,
+                x_align: Clutter.ActorAlign.END,
                 y_align: Clutter.ActorAlign.CENTER,
                 style_class: 'portfolio-label'
             });
             let count = String(config.stocks[stock].count);
-            item.add_actor(new St.Label({text: count}));
-            bb.add_actor(item);
-            item = new St.Bin();
+            item.add_actor(new St.Label({ text: count }));
+            layout.attach(item, 1, row, 1, 1);
+
+            item = new St.BoxLayout({x_align: Clutter.ActorAlign.START});
+            let bin = new St.Bin();
             button = Main.panel.statusArea.aggregateMenu._system._createActionButton(String(sl.name), 'Open in Browser');
             button.connect('clicked', Gtk.show_uri.bind(this,
                 null,
@@ -316,9 +313,10 @@ const PortfolioMenuButton = new Lang.Class({
             ));
             button.add_actor(sl.name);
             button.set_style('padding: 8px; border: 0px; border-radius: 5px');
-            item.add_actor(button);
-            bb.add_actor(item);
-            bb.add_actor(new St.Widget({x_expand: true}));
+            bin.add_actor(button);
+            item.add_actor(bin);
+            layout.attach(item, 2, row, 1, 1);
+
             item = new St.BoxLayout({
                 vertical: true,
                 x_align: Clutter.ActorAlign.END,
@@ -327,7 +325,8 @@ const PortfolioMenuButton = new Lang.Class({
             item.add_actor(sl.value_current);
             item.add_actor(sl.diff_yesterday);
             item.add_actor(sl.diff_yesterday_rel);
-            bb.add_actor(item);
+            layout.attach(item, 3, row, 1, 1);
+
             item = new St.BoxLayout({
                 vertical: true,
                 x_align: Clutter.ActorAlign.END,
@@ -336,13 +335,13 @@ const PortfolioMenuButton = new Lang.Class({
             item.add_actor(sl.value_current_sum);
             item.add_actor(sl.diff_bought_sum);
             item.add_actor(sl.diff_bought_sum_rel);
-            bb.add_actor(item);
-            list.add_actor(bb);
+            layout.attach(item, 4, row, 1, 1);
+
+            row += 1;
 
             this.redrawStock(stock);
         }
 
-        this.stocklist.actor.add_actor(list);
         this.recalcPortfolio();
     },
 
@@ -489,7 +488,6 @@ const PortfolioMenuButton = new Lang.Class({
 
         let pl = this.portfolioLabels;
         setTextFormatted(pl.value_current, p.value_current, 2, false);
-        setTextFormatted(pl.value_bought, p.value_bought, 2, false);
         setTextFormatted(pl.diff_bought, p.diff_bought, 2, true);
         setTextFormatted(pl.diff_bought_rel, p.diff_bought_rel, 2, true, '%');
         setTextFormatted(pl.diff_yesterday, p.diff_yesterday, 2, true);
@@ -504,14 +502,14 @@ const PortfolioMenuButton = new Lang.Class({
             buyval: buyval
         };
         this.saveConfig();
-        this.rebuildStocklist();
+        this.rebuildGrid();
         this.fetchStocks();
     },
 
     removeStock: function(stock) {
         delete config.stocks[stock];
         this.saveConfig();
-        this.rebuildStocklist();
+        this.rebuildGrid();
     },
 
     onKeyPress: function(origin, event) {
