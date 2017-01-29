@@ -1,0 +1,49 @@
+# Brazilian Portuguese translations for gnome-shell-portfolio-manager package
+# Brazilian Portuguese translation for gnome-shell-portfolio-manager.
+# Copyright (C) 2017 THE gnome-shell-portfolio-manager'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the
+# gnome-shell-portfolio-manager package.
+# Timur Celik <mail@timurcelik.de>, 2017.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-shell-portfolio-manager\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-01-29 09:44-0200\n"
+"PO-Revision-Date: 2017-01-29 09:48-0200\n"
+"Language-Team: Brazilian Portuguese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.11\n"
+"Last-Translator: Eduardo Weiland <eduardo@eduardoweiland.info>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: pt_BR\n"
+
+#: extension.js
+msgid "Portfolio value:"
+msgstr "Valor da carteira:"
+
+#: extension.js
+msgid "Purchase value:"
+msgstr "Valor comprado:"
+
+#: extension.js
+msgid "Difference to purchase value:"
+msgstr "Diferença para o valor comprado:"
+
+#: extension.js
+msgid "Difference to previous day:"
+msgstr "Diferença para o dia anterior:"
+
+#: extension.js
+msgid "cnt."
+msgstr "qtd."
+
+#: extension.js
+msgid "symbol"
+msgstr "símbolo"
+
+#: extension.js
+msgid "price"
+msgstr "preço"
