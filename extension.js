@@ -363,7 +363,7 @@ const PortfolioMenuButton = new Lang.Class({
         se.count_entry = new St.Entry({
             hint_text: _('cnt.'),
             can_focus: true,
-            width: 100
+            width: 75
         });
         se.count_entry.set_style('margin-right: 10px');
         se.count_entry.clutter_text.connect('key-press-event',
@@ -379,9 +379,9 @@ const PortfolioMenuButton = new Lang.Class({
                                            this.onKeyPress.bind(this));
         bb.add_actor(se.name_entry);
         se.buyval_entry = new St.Entry({
-            hint_text: _('price'),
+            hint_text: _('price') + ' (' + preferences.currency + ')',
             can_focus: true,
-            width: 100
+            width: 125
         });
         se.buyval_entry.clutter_text.connect('key-press-event',
                                              this.onKeyPress.bind(this));
@@ -437,13 +437,14 @@ const PortfolioMenuButton = new Lang.Class({
     recalcStock: function(stock, data, currency_rate) {
         let sd = this.stocksData[stock];
         let sc = config.stocks[stock];
-        sd.lastTradePrice = data[0]/currency_rate[0];
-        sd.previousClose = data[1]/currency_rate[0];
+        sd.lastTradePrice = data[0];
+        sd.lastTradePriceConverted = sd.lastTradePrice/currency_rate[0];
+        sd.previousClose = data[1];
         sd.name = data[2];
         sd.currency = data[3];
         sd.diff_yesterday = sd.lastTradePrice-sd.previousClose;
         sd.diff_yesterday_rel = sd.diff_yesterday/sd.previousClose*100;
-        sd.value_current_sum = sd.lastTradePrice*sc.count;
+        sd.value_current_sum = sd.lastTradePriceConverted*sc.count;
         sd.diff_bought_sum = sd.value_current_sum-sc.count*sc.buyval;
         sd.diff_bought_sum_rel = sd.diff_bought_sum/sc.count/sc.buyval*100;
 
@@ -454,11 +455,11 @@ const PortfolioMenuButton = new Lang.Class({
         let sd = this.stocksData[stock];
         let sl = this.stocksLabels[stock];
         sl.name.set_text(sd.name);
-        setTextFormatted(sl.value_current, sd.lastTradePrice, 2, false);
-        setTextFormatted(sl.diff_yesterday, sd.diff_yesterday, 2, true);
+        setTextFormatted(sl.value_current, sd.lastTradePrice, 2, false, ' ' + sd.currency);
+        setTextFormatted(sl.diff_yesterday, sd.diff_yesterday, 2, true, ' ' + sd.currency);
         setTextFormatted(sl.diff_yesterday_rel, sd.diff_yesterday_rel, 2, true, '%');
-        setTextFormatted(sl.value_current_sum, sd.value_current_sum, 2, false);
-        setTextFormatted(sl.diff_bought_sum, sd.diff_bought_sum, 2, true);
+        setTextFormatted(sl.value_current_sum, sd.value_current_sum, 2, false, ' ' + preferences.currency);
+        setTextFormatted(sl.diff_bought_sum, sd.diff_bought_sum, 2, true, ' ' + preferences.currency);
         setTextFormatted(sl.diff_bought_sum_rel, sd.diff_bought_sum_rel, 2, true, '%');
     },
 
@@ -476,7 +477,7 @@ const PortfolioMenuButton = new Lang.Class({
         for (var stock in config.stocks) {
             let it_cfg = config.stocks[stock];
             let it_cur = this.stocksData[stock];
-            p.value_current += it_cfg.count * it_cur.lastTradePrice;
+            p.value_current += it_cfg.count * it_cur.lastTradePriceConverted;
             p.value_bought += it_cfg.count * it_cfg.buyval;
             p.value_yesterday += it_cur.previousClose * it_cfg.count;
             p.diff_yesterday += it_cur.diff_yesterday * it_cfg.count;
@@ -487,11 +488,9 @@ const PortfolioMenuButton = new Lang.Class({
 
 
         let pl = this.portfolioLabels;
-        setTextFormatted(pl.value_current, p.value_current, 2, false);
-        setTextFormatted(pl.diff_bought, p.diff_bought, 2, true);
+        setTextFormatted(pl.value_current, p.value_current, 2, false, ' ' + preferences.currency);
+        setTextFormatted(pl.diff_bought, p.diff_bought, 2, true, ' ' + preferences.currency);
         setTextFormatted(pl.diff_bought_rel, p.diff_bought_rel, 2, true, '%');
-        setTextFormatted(pl.diff_yesterday, p.diff_yesterday, 2, true);
-        setTextFormatted(pl.diff_yesterday_rel, p.diff_yesterday_rel, 2, true, '%');
 
         this.rebuildPanelMenu(p.diff_bought_rel, diff_bought_rel_old);
     },
