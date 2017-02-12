@@ -63,7 +63,8 @@ const PortfolioMenuButton = new Lang.Class({
 
     _init: function ()
     {
-        Convenience.getSettings().connect('changed', () => {
+        this._settings = Convenience.getSettings();
+        this._settings.connect('changed', () => {
             this.stop();
             this.loadPreferences();
             this.start();
@@ -560,7 +561,7 @@ const PortfolioMenuButton = new Lang.Class({
     },
 
     loadPreferences: function () {
-        let settings = Convenience.getSettings();
+        let settings = this._settings;
         preferences.enable_flash = settings.get_boolean('enable-flash');
         preferences.currency = settings.get_string('portfolio-currency');
         preferences.update_rate = settings.get_int('update-rate');
