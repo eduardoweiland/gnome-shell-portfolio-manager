@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-24 19:37+0100\n"
+"POT-Creation-Date: 2017-02-12 17:08+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,4 +43,24 @@ msgstr ""
 
 #: extension.js
 msgid "price"
+msgstr ""
+
+#: extension.js
+msgid "Today"
+msgstr ""
+
+#: extension.js
+msgid "Total"
+msgstr ""
+
+#: prefs.js
+msgid "Flash on change"
+msgstr ""
+
+#: prefs.js
+msgid "Portfolio currency"
+msgstr ""
+
+#: prefs.js
+msgid "Update rate (seconds)"
 msgstr ""
