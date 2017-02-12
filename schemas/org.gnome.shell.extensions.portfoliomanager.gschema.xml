@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schemalist gettext-domain="gnome-shell-extensions-portfoliomanager">
-    <schema path="/org/gnome/shell/extensions/portfoliomanager/" id="org.gnome.shell.extensions.portfoliomanager">
+<schemalist gettext-domain="gnome-shell-portfolio-manager">
+    <schema path="/org/gnome/shell/extensions/portfolio-manager/" id="org.gnome.shell.extensions.portfolio-manager">
         <key type="b" name="enable-flash">
             <default>true</default>
             <summary>Flash on change</summary>

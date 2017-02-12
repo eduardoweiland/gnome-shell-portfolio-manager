@@ -1,8 +1,8 @@
 {
     "description": "Manage and check your portfolio from the panel.",
     "name": "Portfolio Manager",
-    "gettext-domain": "gnome-shell-extension-portfoliomanager",
-    "settings-schema": "org.gnome.shell.extensions.portfoliomanager",
+    "gettext-domain": "gnome-shell-portfolio-manager",
+    "settings-schema": "org.gnome.shell.extensions.portfolio-manager",
     "shell-version": [
         "3.22"
     ],
