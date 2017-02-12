@@ -9,10 +9,13 @@ const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Soup = imports.gi.Soup;
 const Gettext = imports.gettext;
-const ExtensionUtils = imports.misc.extensionUtils;
 
 Gettext.textdomain("gnome-shell-portfolio-manager");
 const _ = Gettext.gettext;
+
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+const Convenience = Me.imports.convenience;
 
 const CONFIG_DIR = GLib.build_pathv( '/', [
     GLib.get_user_data_dir(),
@@ -24,7 +27,6 @@ const CONFIG_FILE = GLib.build_filenamev([
 ]);
 
 var preferences = {
-    currency: "EUR"
 };
 
 var config = {
@@ -62,6 +64,16 @@ const PortfolioMenuButton = new Lang.Class({
 
     _init: function ()
     {
+        Convenience.getSettings().connect('changed', () => {
+            this.stop();
+            this.loadPreferences();
+            this.start();
+            this.fetchStocks();
+            this.rebuildStockInput();
+            this.rebuildGrid();
+        });
+
+        this.loadPreferences();
         this.loadConfig();
 
         // create the panel bar button
@@ -101,8 +113,12 @@ const PortfolioMenuButton = new Lang.Class({
         this.rebuildStockInput();
         this.rebuildPanelMenu();
         this.fetchStocks();
+        this.start();
+    },
 
-        this.fetchItv = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 120000, () => {
+    start: function () {
+        let rate_ms = preferences.update_rate*1000;
+        this.fetchItv = GLib.timeout_add(GLib.PRIORITY_DEFAULT, rate_ms, () => {
             this.fetchStocks();
             return true;
         }, null);
@@ -237,7 +253,7 @@ const PortfolioMenuButton = new Lang.Class({
         });
         this.panelButtonBox.add_actor(this.panelLabel);
 
-        if(bgcolor !== null) {
+        if(preferences.enable_flash && bgcolor !== null) {
             Tweener.addTween( bgcolor, {
                 alpha: 0,
                 time: 0.5,
@@ -387,6 +403,7 @@ const PortfolioMenuButton = new Lang.Class({
                                              this.onKeyPress.bind(this));
         bb.add_actor(se.buyval_entry);
 
+        this.stockInput.actor.remove_all_children();
         this.stockInput.actor.add_actor(bb);
     },
 
@@ -541,6 +558,13 @@ const PortfolioMenuButton = new Lang.Class({
             }
         } catch (e) {
         }
+    },
+
+    loadPreferences: function () {
+        let settings = Convenience.getSettings();
+        preferences.enable_flash = settings.get_boolean('enable-flash');
+        preferences.currency = settings.get_string('portfolio-currency');
+        preferences.update_rate = settings.get_int('update-rate');
     }
 });
 
@@ -548,10 +572,7 @@ let portfolioMenu;
 
 function init()
 {
-    let extension = ExtensionUtils.getCurrentExtension();
-    let localeDir = extension.dir.get_child('locale');
-    Gettext.bindtextdomain("gnome-shell-portfolio-manager",
-                           localeDir.get_path());
+    Convenience.initTranslations("gnome-shell-portfolio-manager");
 }
 
 function enable()

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extensions-portfoliomanager">
+    <schema path="/org/gnome/shell/extensions/portfoliomanager/" id="org.gnome.shell.extensions.portfoliomanager">
+        <key type="b" name="enable-flash">
+            <default>true</default>
+            <summary>Flash on change</summary>
+        </key>
+        <key type="s" name="portfolio-currency">
+            <default>'USD'</default>
+            <summary>Portfolio currency</summary>
+        </key>
+        <key type="i" name="update-rate">
+            <default>120</default>
+            <summary>Update rate (seconds)</summary>
+        </key>
+    </schema>
+</schemalist>
