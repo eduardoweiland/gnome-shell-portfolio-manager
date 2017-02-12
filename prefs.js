@@ -134,7 +134,7 @@ const CURRENCIES = [
     'SZL', // Swaziland Lilangeni
     'THB', // Thai Baht
     'TND', // Tunisian Dinar
-    'TOP', // Tonga Isl Pa’anga
+    'TOP', // Tonga Isl Pa'anga
     'TRL', // Turkish Lira
     'TTD', // Trinidad Dollar
     'TWD', // Taiwan New Dollar
