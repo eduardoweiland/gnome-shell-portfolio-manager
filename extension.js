@@ -8,9 +8,8 @@ const Tweener = imports.ui.tweener;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Soup = imports.gi.Soup;
-const Gettext = imports.gettext;
 
-Gettext.textdomain("gnome-shell-portfolio-manager");
+const Gettext = imports.gettext.domain("gnome-shell-portfolio-manager");
 const _ = Gettext.gettext;
 
 const ExtensionUtils = imports.misc.extensionUtils;
