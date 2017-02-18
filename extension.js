@@ -170,7 +170,13 @@ const PortfolioMenuButton = new Lang.Class({
             x_align: Clutter.ActorAlign.CENTER,
             layout_manager: new Clutter.GridLayout()
         });
-        this.summary.actor.add_child(this.grid);
+        let summaryBox = new St.BoxLayout();
+        summaryBox.add_actor(this.grid);
+        let scrollView = new St.ScrollView();
+        scrollView.vscrollbar_policy = Gtk.PolicyType.AUTOMATIC;
+        scrollView.hscrollbar_policy = Gtk.PolicyType.NEVER;
+        scrollView.add_actor(summaryBox);
+        this.summary.actor.add_child(scrollView);
 
         this.portfolioLabels = {
             value_current: new St.Label(),
