@@ -446,7 +446,7 @@ const PortfolioMenuButton = new Lang.Class({
                     i += 2;
                 }
 
-                if(refetch === true) {
+                if(true === refetch) {
                     this.fetchStocks();
                 } else {
                     this.recalcPortfolio();
