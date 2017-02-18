@@ -278,15 +278,15 @@ const PortfolioMenuButton = new Lang.Class({
         cr.lineTo(width, zeroline);
         cr.fill();
 
+        cr.setOperator(Cairo.Operator.ATOP);
         cr.setSourceRGBA(0,0.6875,0.25,0.5);
         cr.rectangle(0, 0, width, zeroline);
-        cr.setOperator(Cairo.Operator.ATOP);
         cr.fill();
         cr.setSourceRGBA(1,0.5,0.5,0.5);
         cr.rectangle(0, zeroline, width, height);
-        cr.setOperator(Cairo.Operator.ATOP);
         cr.fill();
 
+        cr.setOperator(Cairo.Operator.OVER);
         cr.setLineWidth(0.5);
         cr.setSourceRGB(0,0,0);
         cr.moveTo(0, zeroline);
