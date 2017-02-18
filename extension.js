@@ -149,6 +149,8 @@ const PortfolioMenuButton = new Lang.Class({
                 previousClose: null,
                 name: stock,
                 currency: "",
+                history: [],
+                historyCurrency: [],
 
                 diff_yesterday: null,
                 diff_yesterday_rel: null,
@@ -190,6 +192,13 @@ const PortfolioMenuButton = new Lang.Class({
 
         item = new St.BoxLayout({
             vertical: true,
+            style_class: 'portfolio-stock-label'
+        });
+        item.add_actor(new St.Label({ text: _('5-Day Chart') }));
+        layout.attach(item, 1, 0, 2, 1);
+
+        item = new St.BoxLayout({
+            vertical: true,
             style_class: 'portfolio-label'
         });
         item.add_actor(new St.Label({ text: _('Today') }));
@@ -201,6 +210,10 @@ const PortfolioMenuButton = new Lang.Class({
         });
         item.add_actor(new St.Label({ text: _('Total') }));
         layout.attach(item, 4, 0, 1, 1);
+
+        this.chart = new St.DrawingArea();
+        layout.attach(this.chart, 1, 1, 2, 1);
+        this.chart.connect('repaint', this.redrawChart.bind(this));
 
         item = new St.BoxLayout({
             vertical: true,
@@ -226,6 +239,33 @@ const PortfolioMenuButton = new Lang.Class({
             y_align: Clutter.ActorAlign.CENTER
         });
         layout.attach(item, 0, 2, 5, 1);
+    },
+
+    redrawChart: function(area) {
+        let cr = area.get_context();
+        let [width, height] = area.get_surface_size();
+        cr.setLineWidth(0.5);
+        cr.moveTo(0, height/2);
+        cr.lineTo(width, height/2);
+        cr.stroke();
+
+        let endTime = Date.now();
+        let startTime = endTime - (1000*3600*24*5);
+        let incTime = (endTime-startTime)/width;
+
+        let openVal = this.getPortfolioValue(startTime/1000);
+        cr.setLineWidth(1);
+        cr.setSourceRGB(0,0,1);
+        cr.moveTo(0, height/2);
+        for(let i = 0; i < width; i++) {
+            let itTime = startTime+i*incTime;
+            let itVal = this.getPortfolioValue(itTime/1000);
+            let itChange = (itVal/openVal*50)-50;
+            cr.lineTo(i,height*(0.5-itChange));
+        }
+        cr.stroke();
+
+        cr.$dispose();
     },
 
     rebuildPanelMenu: function(new_value, old_value) {
@@ -287,6 +327,9 @@ const PortfolioMenuButton = new Lang.Class({
                     lastTradePrice: null,
                     previousClose: null,
                     name: stock,
+                    currency: "",
+                    history: [],
+                    historyCurrency: [],
 
                     diff_yesterday: null,
                     diff_yesterday_rel: null,
@@ -421,7 +464,7 @@ const PortfolioMenuButton = new Lang.Class({
 
         let refetch = false;
         let param_stocks = '';
-        for (var stock in config.stocks) {
+        for (let stock in config.stocks) {
             param_stocks += stock + ',';
             let stock_currency = this.stocksData[stock].currency;
             param_stocks += preferences.currency + stock_currency + '=X,';
@@ -439,7 +482,7 @@ const PortfolioMenuButton = new Lang.Class({
                 msg = msg.replace(new RegExp("N/A", 'g'), "null");
                 let split_body = msg.split('\n');
                 let i = 0;
-                for (var stock in config.stocks) {
+                for (let stock in config.stocks) {
                     let stock_rate = JSON.parse('[' + split_body[i] + ']');
                     let currency_rate = JSON.parse('[' + split_body[i+1] + ']');
                     this.recalcStock(stock, stock_rate, currency_rate);
@@ -452,9 +495,114 @@ const PortfolioMenuButton = new Lang.Class({
                     this.recalcPortfolio();
                 }
             } catch (e) {
-                log(e);
+                log('Error fetching stocks: ' + e);
             }
         });
+
+        if(true === refetch) {
+            return;
+        }
+
+        for (let stock in config.stocks) {
+            let urlPre = 'https://chartapi.finance.yahoo.com/instrument/1.0/';
+            let urlPost = '/chartdata\;type\=quote\;range\=5d/csv';
+            let url = urlPre + stock + urlPost;
+            let message = Soup.form_request_new_from_hash('GET', url, {});
+            this.httpSession.queue_message(
+                message, this.parseChartData.bind(this, stock, false));
+
+            let pc = preferences.currency;
+            let sc = this.stocksData[stock].currency;
+            url = urlPre + pc + sc + '\=X' + urlPost;
+            message = Soup.form_request_new_from_hash('GET', url, {});
+            this.httpSession.queue_message(
+                message, this.parseChartData.bind(this, stock, true));
+        }
+    },
+
+    parseChartData: function(stock, currency, httpSession, message) {
+        try {
+            let msg = message.response_body.data;
+            let split_body = msg.split('\n');
+            if(true === currency) {
+                this.stocksData[stock].historyCurrency = [];
+            } else {
+                this.stocksData[stock].history = [];
+            }
+            for (var i = 0; i < split_body.length; i++) {
+                it = split_body[i];
+                if (it.indexOf(':') !== -1) {
+                    continue;
+                }
+                let parsed_line = JSON.parse('[' + split_body[i] + ']');
+                let new_item = {
+                    timestamp: parsed_line[0],
+                    close: parsed_line[1],
+                    high: parsed_line[2],
+                    low: parsed_line[3],
+                    open: parsed_line[4],
+                    volume: parsed_line[5]
+                };
+                if(true === currency) {
+                    this.stocksData[stock].historyCurrency.push(new_item);
+                } else {
+                    this.stocksData[stock].history.push(new_item);
+                }
+            }
+        } catch (e) {
+            log('Error parsing ' + (currency ? 'currency ' : '') +
+                'history of ' + stock + ': ' + e);
+        }
+        this.chart.queue_repaint();
+    },
+
+    getPortfolioValue: function(timestamp) {
+        let portfolioValue = 0;
+        for (let stock in config.stocks) {
+            let itVal = this.getStockValue(stock, timestamp);
+            portfolioValue += itVal * config.stocks[stock].count;
+        }
+        return portfolioValue;
+    },
+
+    getStockValue: function(stock, timestamp) {
+        let sh = this.stocksData[stock].history;
+        let shc = this.stocksData[stock].historyCurrency;
+        let value;
+        let i = 0;
+        for (; i < sh.length; i++) {
+            if(timestamp > sh[i].timestamp) {
+                continue;
+            }
+            break;
+        }
+        i -= 1;
+
+        if(sh.length !== 0) {
+            if (i<0) {
+                value = sh[0].open;
+            } else {
+                value = sh[i].close;
+            }
+        }
+
+        let j = 0;
+        for (; j < shc.length; j++) {
+            if(timestamp > shc[j].timestamp) {
+                continue;
+            }
+            break;
+        }
+        j -= 1;
+        if(shc.length !== 0) {
+            if (j<0) {
+                value /= shc[0].open;
+            } else {
+                value /= shc[j].close;
+            }
+        }
+
+        return value;
     },
 
     recalcStock: function(stock, data, currency_rate) {
