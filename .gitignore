@@ -1,3 +1,5 @@
+**/*~
 **/*.swp
 *.zip
 locale
+schemas/gschemas.compiled
