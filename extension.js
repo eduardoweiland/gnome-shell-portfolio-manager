@@ -271,24 +271,25 @@ const PortfolioMenuButton = new Lang.Class({
             let v = portfolioValues[i];
             cr.lineTo(i,height*(v-pfMax)/(pfMin-pfMax));
         }
+        cr.setOperator(Cairo.Operator.OVER);
         cr.setLineWidth(1);
-        cr.setSourceRGB(0,0,0);
+        cr.setSourceRGBA(0,0,0,0.5);
         cr.strokePreserve();
-        cr.setSourceRGB(0.9,0.9,0.9);
+        cr.setSourceRGBA(0.5,0.5,0.5,0.5);
         cr.lineTo(width, zeroline);
         cr.fill();
 
         cr.setOperator(Cairo.Operator.ATOP);
-        cr.setSourceRGBA(0,0.6875,0.25,0.5);
+        cr.setSourceRGBA(0,0.6875,0.25,0.9);
         cr.rectangle(0, 0, width, zeroline);
         cr.fill();
-        cr.setSourceRGBA(1,0.5,0.5,0.5);
+        cr.setSourceRGBA(1,0.5,0.5,0.9);
         cr.rectangle(0, zeroline, width, height);
         cr.fill();
 
         cr.setOperator(Cairo.Operator.OVER);
         cr.setLineWidth(0.5);
-        cr.setSourceRGB(0,0,0);
+        cr.setSourceRGB(0.5,0.5,0.5);
         cr.moveTo(0, zeroline);
         cr.lineTo(width, zeroline);
         cr.stroke();
