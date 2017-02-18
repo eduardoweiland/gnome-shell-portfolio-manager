@@ -249,35 +249,48 @@ const PortfolioMenuButton = new Lang.Class({
         let endTime = Date.now();
         let startTime = endTime - (1000*3600*24*5);
         let incTime = (endTime-startTime)/width;
-
         let openVal = this.getPortfolioValue(startTime/1000);
-        cr.moveTo(0, height/2);
-        for(let i = 0; i < width; i++) {
+        let portfolioValues = [];
+        let pfMin = Number.MAX_VALUE;
+        let pfMax = Number.MIN_VALUE;
+        for(let i = 0; i < width+1; i++) {
             let itTime = startTime+i*incTime;
-            let itVal = this.getPortfolioValue(itTime/1000);
-            let itChange = (itVal/openVal*50)-50;
-            cr.lineTo(i,height*(0.5-itChange));
+            let itChange = this.getPortfolioValue(itTime/1000)/openVal;
+            if (itChange < pfMin) {
+                pfMin = itChange;
+            }
+            if (itChange > pfMax) {
+                pfMax = itChange;
+            }
+            portfolioValues.push(itChange);
+        }
+
+        let zeroline = height*(portfolioValues[0]-pfMax)/(pfMin-pfMax);
+        cr.moveTo(0, zeroline);
+        for(let i = 0; i < width+1; i++) {
+            let v = portfolioValues[i];
+            cr.lineTo(i,height*(v-pfMax)/(pfMin-pfMax));
         }
         cr.setLineWidth(1);
         cr.setSourceRGB(0,0,0);
         cr.strokePreserve();
         cr.setSourceRGB(0.9,0.9,0.9);
-        cr.lineTo(width, height/2);
+        cr.lineTo(width, zeroline);
         cr.fill();
 
         cr.setSourceRGBA(0,0.6875,0.25,0.5);
-        cr.rectangle(0, 0, width, height/2);
+        cr.rectangle(0, 0, width, zeroline);
         cr.setOperator(Cairo.Operator.ATOP);
         cr.fill();
         cr.setSourceRGBA(1,0.5,0.5,0.5);
-        cr.rectangle(0, height/2, width, height);
+        cr.rectangle(0, zeroline, width, height);
         cr.setOperator(Cairo.Operator.ATOP);
         cr.fill();
 
         cr.setLineWidth(0.5);
         cr.setSourceRGB(0,0,0);
-        cr.moveTo(0, height/2);
-        cr.lineTo(width, height/2);
+        cr.moveTo(0, zeroline);
+        cr.lineTo(width, zeroline);
         cr.stroke();
 
         cr.$dispose();
