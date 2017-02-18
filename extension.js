@@ -3,6 +3,7 @@ const Main = imports.ui.main;
 const Lang = imports.lang;
 const PanelMenu = imports.ui.panelMenu;
 const Clutter = imports.gi.Clutter;
+const Cairo = imports.cairo;
 const PopupMenu = imports.ui.popupMenu;
 const Tweener = imports.ui.tweener;
 const GLib = imports.gi.GLib;
@@ -244,18 +245,12 @@ const PortfolioMenuButton = new Lang.Class({
     redrawChart: function(area) {
         let cr = area.get_context();
         let [width, height] = area.get_surface_size();
-        cr.setLineWidth(0.5);
-        cr.moveTo(0, height/2);
-        cr.lineTo(width, height/2);
-        cr.stroke();
 
         let endTime = Date.now();
         let startTime = endTime - (1000*3600*24*5);
         let incTime = (endTime-startTime)/width;
 
         let openVal = this.getPortfolioValue(startTime/1000);
-        cr.setLineWidth(1);
-        cr.setSourceRGB(0,0,1);
         cr.moveTo(0, height/2);
         for(let i = 0; i < width; i++) {
             let itTime = startTime+i*incTime;
@@ -263,6 +258,26 @@ const PortfolioMenuButton = new Lang.Class({
             let itChange = (itVal/openVal*50)-50;
             cr.lineTo(i,height*(0.5-itChange));
         }
+        cr.setLineWidth(1);
+        cr.setSourceRGB(0,0,0);
+        cr.strokePreserve();
+        cr.setSourceRGB(0.9,0.9,0.9);
+        cr.lineTo(width, height/2);
+        cr.fill();
+
+        cr.setSourceRGBA(0,0.6875,0.25,0.5);
+        cr.rectangle(0, 0, width, height/2);
+        cr.setOperator(Cairo.Operator.ATOP);
+        cr.fill();
+        cr.setSourceRGBA(1,0.5,0.5,0.5);
+        cr.rectangle(0, height/2, width, height);
+        cr.setOperator(Cairo.Operator.ATOP);
+        cr.fill();
+
+        cr.setLineWidth(0.5);
+        cr.setSourceRGB(0,0,0);
+        cr.moveTo(0, height/2);
+        cr.lineTo(width, height/2);
         cr.stroke();
 
         cr.$dispose();
