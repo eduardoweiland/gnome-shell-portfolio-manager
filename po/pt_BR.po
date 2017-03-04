@@ -9,16 +9,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-shell-portfolio-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-29 09:44-0200\n"
-"PO-Revision-Date: 2017-01-29 09:48-0200\n"
+"POT-Creation-Date: 2017-03-04 16:38-0300\n"
+"PO-Revision-Date: 2017-03-04 16:39-0300\n"
+"Last-Translator: Eduardo Weiland <eduardo@eduardoweiland.info>\n"
 "Language-Team: Brazilian Portuguese\n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.11\n"
-"Last-Translator: Eduardo Weiland <eduardo@eduardoweiland.info>\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"Language: pt_BR\n"
 
 #: extension.js
 msgid "Portfolio value:"
@@ -47,3 +47,27 @@ msgstr "símbolo"
 #: extension.js
 msgid "price"
 msgstr "preço"
+
+#: extension.js
+msgid "Today"
+msgstr "Hoje"
+
+#: extension.js
+msgid "Total"
+msgstr "Total"
+
+#: prefs.js
+msgid "Flash on change"
+msgstr "Piscar com mudanças"
+
+#: prefs.js
+msgid "Portfolio currency"
+msgstr "Moeda da carteira"
+
+#: prefs.js
+msgid "Update rate (seconds)"
+msgstr "Taxa de atualização (segundos)"
+
+#: extension.js
+msgid "5-Day Chart"
+msgstr "Gráfico de 5 dias"
